@@ -1,0 +1,1 @@
+ZipFinder is a tool designed to help users quickly find zip codes for properties in the U.S based on several variables such as median income, median value, and population density.
