@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <head>
+        <p id = title>USA Zip Code Finder</p>
+    </head>
+    <body>
+        <div class = "row">
+            <label>Enter a City</label>
+            <input id = "city" type = "text">
+            <label>Select a State</label>
+            <select name="states" id="states">
+                <option value="none">N/A</option>
+                <option value="alabama">Alabama</option>
+                <option value="alaska">Alaska</option>
+                <option value="arizona">Arizona</option>
+                <option value="arkansas">Arkansas</option>
+                <option value="california">California</option>
+                <option value="colorado">Colorado</option>
+                <option value="connecticut">Connecticut</option>
+                <option value="delaware">Delaware</option>
+                <option value="florida">Florida</option>
+                <option value="georgia">Georgia</option>
+                <option value="hawaii">Hawaii</option>
+                <option value="idaho">Idaho</option>
+                <option value="illinois">Illinois</option>
+                <option value="indiana">Indiana</option>
+                <option value="iowa">Iowa</option>
+                <option value="kansas">Kansas</option>
+                <option value="kentucky">Kentucky</option>
+                <option value="louisiana">Louisiana</option>
+                <option value="maine">Maine</option>
+                <option value="maryland">Maryland</option>
+                <option value="massachusetts">Massachusetts</option>
+                <option value="michigan">Michigan</option>
+                <option value="minnesota">Minnesota</option>
+                <option value="mississippi">Mississippi</option>
+                <option value="missouri">Missouri</option>
+                <option value="montana">Montana</option>
+                <option value="nebraska">Nebraska</option>
+                <option value="nevada">Nevada</option>
+                <option value="new hampshire">New Hampshire</option>
+                <option value="new jersey">New Jersey</option>
+                <option value="new mexico">New Mexico</option>
+                <option value="new york">New York</option>
+                <option value="north carolina">North Carolina</option>
+                <option value="north dakota">North Dakota</option>
+                <option value="ohio">Ohio</option>
+                <option value="oklahoma">Oklahoma</option>
+                <option value="oregon">Oregon</option>
+                <option value="pennsylvania">Pennsylvania</option>
+                <option value="rhode island">Rhode Island</option>
+                <option value="south carolina">South Carolina</option>
+                <option value="south dakota">South Dakota</option>
+                <option value="tennessee">Tennessee</option>
+                <option value="texas">Texas</option>
+                <option value="utah">Utah</option>
+                <option value="vermont">Vermont</option>
+                <option value="virginia">Virginia</option>
+                <option value="washington">Washington</option>
+                <option value="west virginia">West Virginia</option>
+                <option value="wisconsin">Wisconsin</option>
+                <option value="wyoming">Wyoming</option>
+                <option value="district of columbia">District of Columbia</option>
+            </select>
+            <label>Enter a Density (/m<sup>2</sup>)</label>
+            <input id = "density" type = "text">
+            <label>Select a Region</label>
+            <select name="region" id="region">
+                <option value="none">N/A</option>
+                <option value="northeast">Northeast</option>
+                <option value="midwest">Midwest</option>
+                <option value="south">South</option>
+                <option value="southwest">South West</option>
+                <option value="northwest">North West</option>
+            </select>
+            <button id = "submit">Submit</button>
+        </div>
+        <div class = "row">
+            <p id = "output">Output Box<br>Yurr</p>
+            <div id = "map">
+                <style>
+                    .row {
+                        display: flex;
+                    }
+                    #map { 
+                        height: 450px;
+                        width: 740px;
+                        margin-left: 300px;
+                        margin-top: 50px;
+                    }
+                    #title{
+                        text-align: center;
+                    }
+                </style>
+                <script type = "text/javascript">
+                    var map = L.map('map').setView([40.7128, -74.0060], 13);
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(map);
+                </script>
+            </div>
+        </div>
+        <!--wasm.js for sql imported here-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js"></script>
+    </body>
+    <script type = "module" src = nbProject.js></script>
+</html>
