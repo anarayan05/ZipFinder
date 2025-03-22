@@ -11,6 +11,6 @@ home_value_data = pd.read_csv('ZHVI_home_values.csv')
 
 merged_data = pd.merge(desnity_data, home_value_data, on='Zip', how='inner')
 
-#...
+#...more merges
 
 merged_data.to_csv('combined_data.csv', index = False)

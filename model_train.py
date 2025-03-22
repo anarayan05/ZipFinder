@@ -15,4 +15,3 @@ import random
 #Step 1: train the model using real data
 #Step 2: test the model
 #Step 3: move onto using prompts
-#train model to find data in the prompts
