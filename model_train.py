@@ -3,6 +3,9 @@ from sklearn.model_selection import train_test_split
 import pickle
 import random
 
+#Since zip codes are not mathematically associated with the other factors, 
+#create a score based on the factors and use the zip as an identifier
+
 #the plan is to use this model to make predictions of the zip code based on data:
 #density, home value
 #ultimately we can interpret the users sentences/prompts
