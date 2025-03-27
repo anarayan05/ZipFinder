@@ -3,17 +3,10 @@ from sklearn.model_selection import train_test_split
 import pickle
 import random
 
-#Since zip codes are not mathematically associated with the other factors, 
-#create a score based on the factors and use the zip as an identifier
+# The plan is to use this model to predict real estate trends and make investment recommendations:
+# Focus on features like density, historical home values, and growth trends
+# Ultimately, users can input criteria (price range, area, etc.) to get recommendations for potential investments
 
-#the plan is to use this model to make predictions of the zip code based on data:
-#density, home value
-#ultimately we can interpret the users sentences/prompts
-
-#TASKS:
-#You're going to scratch all this code
-#process data until you have everything
-#then move onto training HERE
 
 #Step 1: train the model using real data
 #Step 2: test the model
