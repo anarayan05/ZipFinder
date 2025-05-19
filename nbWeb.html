@@ -8,95 +8,34 @@
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
     <head>
-        <p id = title>USA Zip Code Finder</p>
+        <p id = "title">ZipScope</p><br></p>
+        <div class = "row" id = "btns">
+            <button class = "button">Standard</button>
+            <button class = "button">Predicted</button>
+        </div>
     </head>
     <body>
         <div class = "row">
-            <label>Enter a City</label>
-            <input id = "city" type = "text">
-            <label>Select a State</label>
-            <select name="states" id="states">
-                <option value="none">N/A</option>
-                <option value="alabama">Alabama</option>
-                <option value="alaska">Alaska</option>
-                <option value="arizona">Arizona</option>
-                <option value="arkansas">Arkansas</option>
-                <option value="california">California</option>
-                <option value="colorado">Colorado</option>
-                <option value="connecticut">Connecticut</option>
-                <option value="delaware">Delaware</option>
-                <option value="florida">Florida</option>
-                <option value="georgia">Georgia</option>
-                <option value="hawaii">Hawaii</option>
-                <option value="idaho">Idaho</option>
-                <option value="illinois">Illinois</option>
-                <option value="indiana">Indiana</option>
-                <option value="iowa">Iowa</option>
-                <option value="kansas">Kansas</option>
-                <option value="kentucky">Kentucky</option>
-                <option value="louisiana">Louisiana</option>
-                <option value="maine">Maine</option>
-                <option value="maryland">Maryland</option>
-                <option value="massachusetts">Massachusetts</option>
-                <option value="michigan">Michigan</option>
-                <option value="minnesota">Minnesota</option>
-                <option value="mississippi">Mississippi</option>
-                <option value="missouri">Missouri</option>
-                <option value="montana">Montana</option>
-                <option value="nebraska">Nebraska</option>
-                <option value="nevada">Nevada</option>
-                <option value="new hampshire">New Hampshire</option>
-                <option value="new jersey">New Jersey</option>
-                <option value="new mexico">New Mexico</option>
-                <option value="new york">New York</option>
-                <option value="north carolina">North Carolina</option>
-                <option value="north dakota">North Dakota</option>
-                <option value="ohio">Ohio</option>
-                <option value="oklahoma">Oklahoma</option>
-                <option value="oregon">Oregon</option>
-                <option value="pennsylvania">Pennsylvania</option>
-                <option value="rhode island">Rhode Island</option>
-                <option value="south carolina">South Carolina</option>
-                <option value="south dakota">South Dakota</option>
-                <option value="tennessee">Tennessee</option>
-                <option value="texas">Texas</option>
-                <option value="utah">Utah</option>
-                <option value="vermont">Vermont</option>
-                <option value="virginia">Virginia</option>
-                <option value="washington">Washington</option>
-                <option value="west virginia">West Virginia</option>
-                <option value="wisconsin">Wisconsin</option>
-                <option value="wyoming">Wyoming</option>
-                <option value="district of columbia">District of Columbia</option>
-            </select>
-            <label>Enter a Density (/m<sup>2</sup>)</label>
-            <input id = "density" type = "text">
-            <label>Select a Region</label>
-            <select name="region" id="region">
-                <option value="none">N/A</option>
-                <option value="northeast">Northeast</option>
-                <option value="midwest">Midwest</option>
-                <option value="south">South</option>
-                <option value="southwest">South West</option>
-                <option value="northwest">North West</option>
-            </select>
-            <button id = "submit">Submit</button>
-        </div>
-        <div class = "row">
-            <p id = "output">Output Box<br>Yurr</p>
+            <p id = "desc">An interactive map for exploring<br> historical growth and predicted<br> trends in U.S. zip codes.</p><br>
             <div id = "map">
                 <style>
                     .row {
                         display: flex;
                     }
                     #map { 
-                        height: 450px;
-                        width: 740px;
-                        margin-left: 300px;
+                        height: 675px;
+                        width: 1110px;
+                        margin-left: 150px;
                         margin-top: 50px;
                     }
                     #title{
                         text-align: center;
+                    }
+                    #info{
+                        text-align: center;
+                    }
+                    #btns{
+                        left: 50%;
                     }
                 </style>
                 <script type = "text/javascript">
