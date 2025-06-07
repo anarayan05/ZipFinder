@@ -10,8 +10,7 @@ five_year_min = df['Five_Year_Growth'].min()
 ten_year_min = df['Ten_Year_Growth'].min()
 overall_min = df['Overall_Growth'].min()
 density_min = df['density'].min()
-
-shade_scores = []
+color_scores = []
 
 for index, row in df.iterrows():
     #normalizing 
@@ -20,9 +19,9 @@ for index, row in df.iterrows():
     overall_norm = (row['Overall_Growth'] - overall_min) / (overall_max - overall_min)
     density_norm = (row['density'] - density_min) / (density_max - density_min)
     #calculating shade with chosen weights
-    shade = 0.5 * five_year_norm + 0.3 * ten_year_norm + 0.05 * overall_norm + 0.15 * density_norm
-    shade_scores.append(shade)
+    color = 0.6 * five_year_norm + 0.3 * ten_year_norm + 0.1 * overall_norm
+    color_scores.append(color)
 
-df['shade_score'] = shade_scores
-#df.to_parquet('Databases for CHP/final_database.parquet', index=False)
-#df.to_json('city_data.json', orient='records')
+df['color_score'] = color_scores
+df.to_parquet('Databases for CHP/final_database.parquet', index=False)
+df.to_json('city_data.json', orient='records')

@@ -12,6 +12,9 @@
         <div class = "row" id = "btns">
             <button class = "button">Standard</button>
             <button class = "button">Predicted</button>
+            <button class = "button" id = "hd">High Density</button>
+            <button class = "button" id = "md">Moderate Density</button>
+            <button class = "button" id = "ld">Low Density</button>
         </div>
     </head>
     <body>
@@ -34,17 +37,10 @@
                     #info{
                         text-align: center;
                     }
-                    #btns{
-                        left: 50%;
+                    #hd{
+                        margin-left: 575px;
                     }
                 </style>
-                <script type = "text/javascript">
-                    var map = L.map('map').setView([40.7128, -74.0060], 13);
-                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                    }).addTo(map);
-                </script>
             </div>
         </div>
         <!--wasm.js for sql imported here-->
