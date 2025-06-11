@@ -1,4 +1,4 @@
-//do the mapping for cities of different density ranges and create buttons for them
+//create popups for the markers
 const hd = document.getElementById("hd");
 const md = document.getElementById("md");
 const ld = document.getElementById("ld");
@@ -8,12 +8,6 @@ maxZoom: 19,
 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 const shapeLayer = L.layerGroup().addTo(map);
-
-
-// const allCities = data.map(obj => obj.City); // get all Cities
-// const metro = data.map(obj => obj.Metro);
-// const population = data.map(obj => obj.population);
-// const density = data.map(obj => obj.density);
 
 fetch('city_data.json')
   .then(function(response) {
@@ -43,6 +37,10 @@ fetch('city_data.json')
 function plotCircles(data, density){
   shapeLayer.clearLayers() //clear shapes so nothing overlaps for different buttons
   let allZips = data.map(obj => obj.Zip);
+  let allCities = data.map(obj => obj.City); // get all Cities
+  let metro = data.map(obj => obj.Metro);
+  let population = data.map(obj => obj.population);
+  let num_density = data.map(obj => obj.density);
   let color_scores = data.map(obj => obj.color_score);
   let lat = data.map(obj => obj.lat);
   let long = data.map(obj => obj.long);
@@ -50,12 +48,15 @@ function plotCircles(data, density){
     console.log(color_scores[i])
     console.log(allZips[i])
       let circle_color = generateColor(density, color_scores[i]); //generate color using the density
-      L.circle([lat[i], long[i]], {
+      const circle = L.circle([lat[i], long[i]], {
           color: circle_color,
           fillColor: circle_color,
           fillOpacity: 0.7,
           radius: 500
       }).addTo(shapeLayer);
+      circle.bindPopup(`ZipCode: ${allZips[i]}<br>City: ${allCities[i]}<br>Metro: ${metro[i]}
+        <br>Population: ${population[i]}<br>Population Density: ${num_density[i]}<br>
+        Relative Growth Score: ${ Math.round(color_scores[i] * 1000) / 1000}`);
   }
 }
 
@@ -72,7 +73,6 @@ function generateColor(density, value){
     }
     else if(density == "md"){
         color = `rgb(0, ${value * 255}, 0)`;
-        console.log("hi");
     }
     else{
       color = `rgb(${value * 255}, 0, 0)`;
