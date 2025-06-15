@@ -2,37 +2,66 @@
 const hd = document.getElementById("hd");
 const md = document.getElementById("md");
 const ld = document.getElementById("ld");
+const standard = document.getElementById("standard");
+const forecast = document.getElementById("forecast");
 const map = L.map('map').setView([40.7128, -74.0060], 13);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 maxZoom: 19,
 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 const shapeLayer = L.layerGroup().addTo(map);
+let mode = "standard"; //default standard plot
+let dataCache = null;
 
 fetch('city_data.json')
   .then(function(response) {
     return response.json(); // parse JSON
   })
   .then((data) =>{
-    hd.addEventListener("click", () => {
-      let filtered_data = data.filter(item => item.density >= 5_000);
-      let sorted_data = sortTop200(filtered_data);
-      plotCircles(sorted_data, "hd")
-    })
-    md.addEventListener("click", () => {
-      let filtered_data = data.filter(item => item.density < 5_000 && item.density >= 1_000);
-      let sorted_data = sortTop200(filtered_data);
-      plotCircles(sorted_data, "md")
-    })
-    ld.addEventListener("click", () => {
-      let filtered_data = data.filter(item => item.density < 1_000);
-      let sorted_data = sortTop200(filtered_data);
-      plotCircles(sorted_data, "ld")
-    })
+    dataCache = data;
+    addListeners();
   })
   .catch(function(err) {
     console.error('Failed to load JSON:', err); // json unable to load error
   });
+
+standard.addEventListener('change', ()=> {
+    if(standard.checked){
+        mode = "standard";
+    }
+});
+
+forecast.addEventListener('change', () =>{
+    if(forecast.checked){
+        mode = "forecast";
+    }
+})
+
+function addListeners(){
+    hd.addEventListener("click", () => {
+    //condition for standard plot
+    if(mode == "standard"){
+      let filtered_data = dataCache.filter(item => item.density >= 5_000);
+      let sorted_data = sortTop200(filtered_data);
+      plotCircles(sorted_data, "hd")
+    }
+  });
+  md.addEventListener("click", () => {
+    if(mode == "standard"){
+      let filtered_data = dataCache.filter(item => item.density < 5_000 && item.density >= 1_000);
+      let sorted_data = sortTop200(filtered_data);
+      plotCircles(sorted_data, "md")
+    }
+  });
+  ld.addEventListener("click", () => {
+    if(mode == "standard"){
+      let filtered_data = dataCache.filter(item => item.density < 1_000);
+      let sorted_data = sortTop200(filtered_data);
+      plotCircles(sorted_data, "ld")
+    }
+  });
+}
+
 
 function plotCircles(data, density){
   shapeLayer.clearLayers() //clear shapes so nothing overlaps for different buttons
@@ -54,6 +83,7 @@ function plotCircles(data, density){
           fillOpacity: 0.7,
           radius: 500
       }).addTo(shapeLayer);
+      //adding popup to circle with relevant info
       circle.bindPopup(`ZipCode: ${allZips[i]}<br>City: ${allCities[i]}<br>Metro: ${metro[i]}
         <br>Population: ${population[i]}<br>Population Density: ${num_density[i]}<br>
         Relative Growth Score: ${ Math.round(color_scores[i] * 1000) / 1000}`);
