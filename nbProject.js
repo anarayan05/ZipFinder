@@ -1,9 +1,11 @@
-//create popups for the markers
+//start volatility scoring based on growth rates instesd of forecasting
+//GOAL: Add componnet where you can visualize the the high growth areas, with low and high volatility 
+
 const hd = document.getElementById("hd");
 const md = document.getElementById("md");
 const ld = document.getElementById("ld");
-const standard = document.getElementById("standard");
-const forecast = document.getElementById("forecast");
+const standard = document.getElementById("volatility");
+const volatility = document.getElementById("forecast");
 const map = L.map('map').setView([40.7128, -74.0060], 13);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 maxZoom: 19,
@@ -92,10 +94,12 @@ function plotCircles(data, density){
 
 function sortTop200(data){
   //sorts the top 200 of the portion of data based on the shade score given
+  //bubble sorting (swapping pairs)
     return data.sort((a, b) => 
     {return b.shade_score - a.shade_score;}).slice(0,200);
 }
 
+//generating each primary color for each density variation
 function generateColor(density, value){
   let color = ``;
     if(density == "hd"){
