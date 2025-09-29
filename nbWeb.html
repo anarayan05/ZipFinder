@@ -15,12 +15,18 @@
                 Standard
             </label>
             <label>
-                <input type = "radio" name = "decision" value = "no" id = "Volatilty">
+                <input type = "radio" name = "decision" value = "no" id = "volatilty">
                 Volatilty
             </label>
             <button class = "button" id = "hd">High Density</button>
             <button class = "button" id = "md">Moderate Density</button>
             <button class = "button" id = "ld">Low Density</button>
+        </div>
+
+        <!--Buttons unused as of now, just invisble-->
+        <div class = "row">
+            <button class = "button" id = "lv">Least Volatile</button>
+            <button class = "button" id = "mv">Most Volatile</button>
         </div>
     </head>
     <body>
@@ -44,7 +50,13 @@
                         text-align: center;
                     }
                     #hd{
-                        margin-left: 575px;
+                        margin-left: 440px;
+                    }
+                    #lv{
+                        opacity: 0;
+                    }
+                    #mv{
+                        opacity: 0;
                     }
                 </style>
             </div>
