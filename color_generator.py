@@ -23,5 +23,8 @@ for index, row in df.iterrows():
     color_scores.append(color)
 
 df['color_score'] = color_scores
-df.to_parquet('Databases for CHP/final_database.parquet', index=False)
-df.to_json('city_data.json', orient='records')
+df.dropna()
+#get top 10 color scores where density is greater than 5000
+print(df[df['density'] > 5000].nlargest(200, 'color_score')['color_score'].tolist())
+# df.to_parquet('Databases for CHP/final_database.parquet', index=False)
+# df.to_json('city_data.json', orient='records')

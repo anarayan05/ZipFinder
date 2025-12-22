@@ -24,9 +24,15 @@ def calculate_growth_volatility(rate1, rate2, rate3):
     mean_growth = (rate1 + rate2 + rate3) / 3
     variance = ((rate1 - mean_growth)**2 + (rate2 - mean_growth)**2 + (rate3 - mean_growth)**2) / 3
     vol_scores = np.sqrt(variance) / np.abs(mean_growth) #vol = stdev / mean
-    vol_scores_min = np.nanmin(vol_scores)
-    vol_scores_max = np.nanmax(vol_scores)
-    normalized_vol_scores = (vol_scores - vol_scores_min) / (vol_scores_max - vol_scores_min) #normalized
+    vol_scores_high = np.nanquantile(vol_scores, 0.90) #90th percentile
+
+    #set top 10% of volatility scores to nan
+    vol_scores_filtered = vol_scores.copy()
+    vol_scores_filtered[vol_scores > vol_scores_high] = np.nan
+
+    filtered_min = np.nanmin(vol_scores_filtered) #min of filtered
+    filtered_max = np.nanmax(vol_scores_filtered) #max of filtered
+    normalized_vol_scores = (vol_scores_filtered - filtered_min) / (filtered_max - filtered_min) #normalized
     return normalized_vol_scores
     
 
@@ -63,6 +69,6 @@ merged_data = pd.merge(home_value_data[['Zip', 'Metro']], growth_df, on='Zip', h
 #SECOND MERGE HERE
 merged_data = pd.merge(merged_data, density_data, on='Zip', how='inner').dropna()
 
-merged_data.to_parquet('Databases for CHP/final_database.parquet', index=False)
+# merged_data.to_parquet('Databases for CHP/final_database.parquet', index=False)
 
 #dparquet = pd.read_parquet('Databases for CHP/final_database.parquet')

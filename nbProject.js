@@ -1,8 +1,10 @@
-//CURRENT: Plotted volatility. Most volatile (FOR NOW)
-  //Check out volatility formula because values are very low all around, doesnt seem normalized. (Possible outliers)
-  //Possibly do an intersection of standard growth with it
+//CURRENT: Plotted volatility. Least volatile (FOR NOW)
+  //Volatility fixed
+  //Note: Top least volatile high density areas are the same as top 200 highest growth areas
+  //Possibly do an intersection of standard growth with it after fixed
+  //Explore adding retailer data
 
-//GOAL: Add componnet where you can visualize the the high growth areas, with low and high volatility 
+//GOAL: Add component where you can visualize the the high growth areas, with low and high volatility 
 
 const hd = document.getElementById("hd");
 const md = document.getElementById("md");
@@ -98,10 +100,10 @@ function plotCircles(data, density, is_standard){
   let lat = data.map(obj => obj.lat);
   let long = data.map(obj => obj.long);
   for(var i = 0;i < data.length; i++){
-      console.log(allZips[i])
       let circle_color;
       if(is_standard){
         circle_color = generateColor(density, growth_score[i]); //generate color using the density
+        console.log(growth_score[i]);
       }
       else{
         circle_color = generateColor(density, vol_score[i]);
@@ -114,9 +116,9 @@ function plotCircles(data, density, is_standard){
       }).addTo(shapeLayer);
       //adding popup to circle with relevant info
       circle.bindPopup(`ZipCode: ${allZips[i]}<br>City: ${allCities[i]}<br>Metro: ${metro[i]}
-        <br>Population: ${population[i]}<br>Population Density: ${num_density[i]}<br>
-        Relative Growth Score: ${Math.round(growth_score[i] * 1000) / 1000}
-        <br>Growth Volatility Score: ${Math.round(vol_score[i] * 1000) / 1000}`);
+        <br>Population: ${population[i]}<br>Population Density (/sq mi): ${num_density[i]}<br>
+        Relative Growth Score (0 - 1): ${Math.round(growth_score[i] * 1000) / 1000}
+        <br>Growth Volatility Score (0 - 1): ${Math.round(vol_score[i] * 1000) / 1000}`);
   }
 }
 
@@ -125,11 +127,11 @@ function sortTop200(data, is_standard){
   //bubble sorting (swapping pairs)
   if(is_standard){
     return data.sort((a, b) => 
-    {return b.color_score - a.color_score;}).slice(0,200);
+    {return b.color_score - a.color_score;}).slice(0,200); //sorting by HIGHEST growth
   }
   else{
     return data.sort((a, b) => 
-    {return b.Growth_Volatility  - a.Growth_Volatility ;}).slice(0,200); //sorting by LEAST volatile
+    {return a.Growth_Volatility  - b.Growth_Volatility ;}).slice(0,200); //sorting by LEAST volatile
   }
 }
 
