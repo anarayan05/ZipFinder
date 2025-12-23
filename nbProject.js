@@ -1,8 +1,12 @@
-//CURRENT: Plotted volatility. Least volatile (FOR NOW)
+//CURRENT:
   //Volatility fixed
   //Note: Top least volatile high density areas are the same as top 200 highest growth areas
   //Possibly do an intersection of standard growth with it after fixed
   //Explore adding retailer data
+
+//TODO:
+  //define all data before addListeners() function
+  //incorperate overlapped data for overlap mode
 
 //GOAL: Add component where you can visualize the the high growth areas, with low and high volatility 
 
@@ -11,14 +15,21 @@ const md = document.getElementById("md");
 const ld = document.getElementById("ld");
 const standard = document.getElementById("standard");
 const volatility = document.getElementById("volatilty");
+const overlap = document.getElementById("overlap");
 const map = L.map('map').setView([40.7128, -74.0060], 13);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 maxZoom: 19,
 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 const shapeLayer = L.layerGroup().addTo(map);
-let st_mode = true; //default standard plot
-let dataCache = null;
+let mode = "standard"; //default standard plot
+
+//declare all data before addListeners() function
+let dataCache;
+
+let hd_data, hd_growth, hd_volatility, hd_overlap;
+let md_data, md_growth, md_volatility, md_overlap;
+let ld_data, ld_growth, ld_volatility, ld_overlap;
 
 fetch('city_data.json')
   .then(function(response) {
@@ -26,6 +37,22 @@ fetch('city_data.json')
   })
   .then((data) =>{
     dataCache = data;
+    //initialize all data for each listener event
+    hd_data = dataCache.filter(item => item.density >= 5_000);
+    hd_growth = sortTop200(hd_data, "standard");
+    hd_volatility = sortTop200(hd_data, "volatility");
+    hd_overlap = overlapData(hd_growth, hd_volatility);
+
+    md_data = dataCache.filter(item => item.density < 5_000 && item.density >= 1_000);
+    md_growth = sortTop200(md_data, "standard");
+    md_volatility = sortTop200(md_data, "volatility");
+    md_overlap = overlapData(md_growth, md_volatility);
+
+    ld_data = dataCache.filter(item => item.density < 1_000);
+    ld_growth = sortTop200(ld_data, "standard");
+    ld_volatility = sortTop200(ld_data, "volatility");
+    ld_overlap = overlapData(ld_growth, ld_volatility);
+
     addListeners();
   })
   .catch(function(err) {
@@ -34,58 +61,76 @@ fetch('city_data.json')
 
 standard.addEventListener('change', ()=> {
     if(standard.checked){
-        st_mode = true;
+        mode = "standard";
     }
 });
 
 volatility.addEventListener('change', () =>{
     if(volatility.checked){
-        st_mode = false;
+        mode = "volatility";
     }
 })
+
+overlap.addEventListener('change', () =>{
+    if(overlap.checked){
+        mode = "overlap";
+    }
+});
 
 function addListeners(){
   hd.addEventListener("click", () => {
     //condition for standard plot
-    let filtered_data = dataCache.filter(item => item.density >= 5_000);
     let sorted_data;
-    if(st_mode){
-      sorted_data = sortTop200(filtered_data, true);
-      plotCircles(sorted_data, "hd", true);
+    if(mode == "standard"){
+      sorted_data = hd_growth;
+      plotCircles(sorted_data, "hd", "standard");
     }
-    else{
-      sorted_data = sortTop200(filtered_data, false);
-      plotCircles(sorted_data, "hd", false);
+    else if(mode == "volatility"){
+      sorted_data = hd_volatility;
+      plotCircles(sorted_data, "hd", "volatility");
+    }
+    else if(mode == "overlap"){
+      sorted_data = hd_overlap;
+      console.log(sorted_data.length);
+      plotCircles(sorted_data, "hd", "overlap");
     }
   });
   md.addEventListener("click", () => {
-    let filtered_data = dataCache.filter(item => item.density < 5_000 && item.density >= 1_000);
     let sorted_data;
-    if(st_mode){
-      sorted_data = sortTop200(filtered_data, true);
-      plotCircles(sorted_data, "md", true);
+    if(mode == "standard"){
+      sorted_data = md_growth;
+      plotCircles(sorted_data, "md", "standard");
     }
-    else{
-      sorted_data = sortTop200(filtered_data, false);
-      plotCircles(sorted_data, "md", false);
+    else if(mode == "volatility"){
+      sorted_data = md_volatility;
+      plotCircles(sorted_data, "md", "volatility");
+    }
+    else if(mode == "overlap"){
+      sorted_data = md_overlap;
+      console.log(sorted_data.length);
+      plotCircles(sorted_data, "md", "overlap");
     }
   });
   ld.addEventListener("click", () => {
-    let filtered_data = dataCache.filter(item => item.density < 1_000);
     let sorted_data;
-    if(st_mode){
-      sorted_data = sortTop200(filtered_data, true);
-      plotCircles(sorted_data, "ld", true);
+    if(mode == "standard"){
+      sorted_data = ld_growth;
+      plotCircles(sorted_data, "ld", "standard");
     }
-    else{
-      sorted_data = sortTop200(filtered_data, false);
-      plotCircles(sorted_data, "ld", false);
+    else if(mode == "volatility"){
+      sorted_data = ld_volatility;
+      plotCircles(sorted_data, "ld", "volatility");
+    }
+    else if(mode == "overlap"){
+      sorted_data = ld_overlap;
+      console.log(sorted_data.length);
+      plotCircles(sorted_data, "ld", "overlap");
     }
   });
 }
 
 
-function plotCircles(data, density, is_standard){
+function plotCircles(data, density, mode){
   shapeLayer.clearLayers() //clear shapes so nothing overlaps for different buttons
   let allZips = data.map(obj => obj.Zip);
   let allCities = data.map(obj => obj.City); // get all Cities
@@ -101,11 +146,13 @@ function plotCircles(data, density, is_standard){
   let long = data.map(obj => obj.long);
   for(var i = 0;i < data.length; i++){
       let circle_color;
-      if(is_standard){
+      if(mode == "standard"){
         circle_color = generateColor(density, growth_score[i]); //generate color using the density
-        console.log(growth_score[i]);
       }
-      else{
+      else if(mode == "volatility"){
+        circle_color = generateColor(density, vol_score[i]);
+      }
+      else if(mode == "overlap"){
         circle_color = generateColor(density, vol_score[i]);
       }
       const circle = L.circle([lat[i], long[i]], {
@@ -122,17 +169,28 @@ function plotCircles(data, density, is_standard){
   }
 }
 
-function sortTop200(data, is_standard){
+function sortTop200(data, mode){
   //sorts the top 200 of the portion of data based on the shade score given
   //bubble sorting (swapping pairs)
-  if(is_standard){
+  if(mode == "standard"){
     return data.sort((a, b) => 
     {return b.color_score - a.color_score;}).slice(0,200); //sorting by HIGHEST growth
   }
-  else{
+  else if(mode == "volatility"){
     return data.sort((a, b) => 
     {return a.Growth_Volatility  - b.Growth_Volatility ;}).slice(0,200); //sorting by LEAST volatile
   }
+}
+
+function overlapData(growthData, volatilityData){
+  let overlap_data = [];
+  for(let i = 0; i < growthData.length; i++){
+    //finds some volatility data that has the same zip code for each growth data
+    if(volatilityData.some(item => item.Zip === growthData[i].Zip)){
+      overlap_data.push(growthData[i]);
+    }
+  }
+  return overlap_data;
 }
 
 //generating each primary color for each density variation

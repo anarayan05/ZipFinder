@@ -8,25 +8,23 @@
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
     <head>
-        <p id = "title">ZipScope</p><br></p>
-        <div class = "row" id = "btns">
+        <p id = "title">ZipFinder</p><br></p>
+        <div class = "row">
             <label>
                 <input type = "radio" name = "decision" value = "no" id = "standard" checked>
-                Standard
+                Growth
             </label>
             <label>
                 <input type = "radio" name = "decision" value = "no" id = "volatilty">
                 Volatilty
             </label>
+            <label>
+                <input type = "radio" name = "decision" value = "no" id = "overlap">
+                Overlap
+            </label>
             <button class = "button" id = "hd">High Density</button>
             <button class = "button" id = "md">Moderate Density</button>
             <button class = "button" id = "ld">Low Density</button>
-        </div>
-
-        <!--Buttons unused as of now, just invisble-->
-        <div class = "row">
-            <button class = "button" id = "lv">Least Volatile</button>
-            <button class = "button" id = "mv">Most Volatile</button>
         </div>
     </head>
     <body>
@@ -51,12 +49,6 @@
                     }
                     #hd{
                         margin-left: 440px;
-                    }
-                    #lv{
-                        opacity: 0;
-                    }
-                    #mv{
-                        opacity: 0;
                     }
                 </style>
             </div>
