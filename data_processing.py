@@ -23,7 +23,7 @@ def calculate_growth_rate(df, start_year, end_year):
 def calculate_growth_volatility(rate1, rate2, rate3):
     mean_growth = (rate1 + rate2 + rate3) / 3
     variance = ((rate1 - mean_growth)**2 + (rate2 - mean_growth)**2 + (rate3 - mean_growth)**2) / 3
-    vol_scores = np.sqrt(variance) / np.abs(mean_growth) #vol = stdev / mean
+    vol_scores = np.sqrt(variance) / np.abs(mean_growth) #vol = variance / mean
     vol_scores_high = np.nanquantile(vol_scores, 0.90) #90th percentile
 
     #set top 10% of volatility scores to nan
