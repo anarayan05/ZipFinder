@@ -10,6 +10,16 @@
     <head>
         <p id = "title">ZipFinder</p><br>
         <div class = "row">
+            <button class = "button" id = "ai">AI Data Filter</button>
+            <input type="text" id="textbox" placeholder="ex: show me low volatility areas with the retailer">
+            <input type = "button" value = "Submit" id = "submit">
+            <button class = "button" id = "hd">High Density</button>
+            <button class = "button" id = "md">Moderate Density</button>
+            <button class = "button" id = "ld">Low Density</button>
+        </div>
+    </head>
+    <body>
+        <div class = "row">
             <label>
                 <input type = "checkbox" name = "decision" value = "no" id = "standard" checked>
                 Growth
@@ -22,15 +32,15 @@
                 <input type = "checkbox" name = "decision" value = "no" id = "retailer">
                 Retailer
             </label>
-            <button class = "button" id = "hd">High Density</button>
-            <button class = "button" id = "md">Moderate Density</button>
-            <button class = "button" id = "ld">Low Density</button>
         </div>
-    </head>
-    <body>
         <div class = "row">
-            <p id = "desc">An interactive map for exploring<br> historical growth and predicted<br> trends in U.S. zip codes.<br><br><b>Checkboxes</b><br>
-                <br>Growth - Top High Growth Zip Codes<br><br>Volatility - Top High Volatility Zip Codes<br><br>Retailer - Zip Codes with Walmarts</p><br>
+            <p id = "desc">An interactive map for exploring<br> historical growth and predicted<br> trends in U.S. zip codes.<br><br><br><b>Checkboxes</b><br>
+                <br>Growth - Top High Growth Zip Codes<br><br>Volatility - Top High Volatility Zip Codes<br><br>Retailer - Zip Codes with Walmarts<br>
+                <br><b>Filter Buttons</b><br><br>High Density - Greater than 5000 people/mi<sup>2</sup><br>
+                <br>Moderate Density - Between 1000 and 5000 people/mi<sup>2</sup><br><br>Low Density - Less than 1000 people/mi<sup>2</sup><br>
+                <br><br><b>Directions</b><br><br>Select the data layers you want to see <br> using the checkboxes. Then further filter the 
+                <br>data by population density using the grey buttons.<br> Explore the map to see the results. Use the 
+                <br>"AI Data Filter" button to alternatively <br> for a less manual experience.<br></p>
             <div id = "map">
                 <style>
                     .row {
@@ -39,17 +49,36 @@
                     #map { 
                         height: 675px;
                         width: 1110px;
-                        margin-left: 100px;
-                        margin-top: 50px;
+                        margin-left: 25px;
                     }
                     #title{
                         text-align: center;
                     }
-                    #info{
-                        text-align: center;
-                    }
                     #hd{
-                        margin-left: 440px;
+                        margin-left: 139px;
+                    }
+                    #ai{
+                        margin-left: 25px;
+                        background-color: rgb(56, 215, 255);
+                    }
+                    #ai {
+                        margin-right: 10px;
+                    }
+                    #textbox {
+                        width: 281px;
+                        opacity: 0;
+                    }
+                    #submit {
+                        opacity: 0;
+                    }
+                    #standard {
+                        margin-top: 25px;
+                    }
+                    #volatility {
+                        margin-top: 25px;
+                    }
+                    #retailer {
+                        margin-top: 25px;
                     }
                 </style>
             </div>

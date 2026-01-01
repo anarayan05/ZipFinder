@@ -72,6 +72,7 @@ fetch('city_data.json')
     console.error('Failed to load JSON:', err); // json unable to load error
   });
 
+//checkbox event listeners
 standard.addEventListener('change', updateMode);
 
 volatility.addEventListener('change', updateMode);
