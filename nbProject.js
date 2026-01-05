@@ -1,14 +1,16 @@
 //CURRENT:
-  //Volatility fixed
+  //Added plot button to plot after selecting options
+  //Made data easily accessible with indexed dictionary
+  //made desnity buttons change styles when selected
+  //AI Data filter button added but not implemented
   //Note: Top least volatile high density areas are the same as top 200 highest growth areas
-  //Possibly do an intersection of standard growth with it after fixed
-  //Explore adding retailer data
 
 //TODO:
-  //define all data before addListeners() function
-  //incorperate overlapped data for overlap mode
+  //Work on the AI data filter querying system
+  //Explore adding user inputs for top n zip codes instead of just top 200, maybe radius around zip code etc...
+  //Explore adding different retailers or energy/utility cost data for zip codes
 
-//GOAL: Add component where you can visualize the the high growth areas, with low and high volatility 
+//MAIN GOAL: AI Data Filter querying system for users
 
 const hd = document.getElementById("hd");
 const md = document.getElementById("md");
@@ -16,6 +18,8 @@ const ld = document.getElementById("ld");
 const standard = document.getElementById("standard");
 const volatility = document.getElementById("volatility");
 const retailer = document.getElementById("retailer");
+const plot = document.getElementById("plot");
+
 const map = L.map('map').setView([40.7128, -74.0060], 13);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 maxZoom: 19,
@@ -23,10 +27,12 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
 }).addTo(map);
 const shapeLayer = L.layerGroup().addTo(map);
 let mode = "standard"; //default standard plot
+let density = "hd"; //default high density
 
 //declare all data before addListeners() function  - high density, moderate density, low density
 // combined with standard, volatility, overlap, retailer
 let dataCache;
+let dataIndex; //to store all indexed data for easy access later
 
 let hd_data, hd_growth, hd_volatility, hd_overlap, hd_retailer, hd_growth_retailer, hd_volatility_retailer, hd_overlap_retailer;
 let md_data, md_growth, md_volatility, md_overlap, md_retailer, md_growth_retailer, md_volatility_retailer, md_overlap_retailer;
@@ -66,21 +72,63 @@ fetch('city_data.json')
     ld_volatility_retailer = ld_volatility.filter(item => item.Walmart_Presence == 1);
     ld_overlap_retailer = ld_overlap.filter(item => item.Walmart_Presence == 1);
 
-    addListeners();
+    //store indexed data in dict type for easy access later
+    dataIndex = {
+      hd: {
+        "standard": hd_growth,
+        "volatility": hd_volatility,
+        "overlap": hd_overlap,
+        "retailer": hd_retailer,
+        "standard retailer": hd_growth_retailer,
+        "volatility retailer": hd_volatility_retailer,
+        "overlap retailer": hd_overlap_retailer
+      },
+      md: {
+        "standard": md_growth,
+        "volatility": md_volatility,
+        "overlap": md_overlap,
+        "retailer": md_retailer,
+        "standard retailer": md_growth_retailer,
+        "volatility retailer": md_volatility_retailer,
+        "overlap retailer": md_overlap_retailer
+      },
+      ld: {
+        "standard": ld_growth,
+        "volatility": ld_volatility,
+        "overlap": ld_overlap,
+        "retailer": ld_retailer,
+        "standard retailer": ld_growth_retailer,
+        "volatility retailer": ld_volatility_retailer,
+        "overlap retailer": ld_overlap_retailer
+      }
+    };
   })
   .catch(function(err) {
     console.error('Failed to load JSON:', err); // json unable to load error
   });
 
-//checkbox event listeners
+//adding event listeners to checkboxes and buttons
 standard.addEventListener('change', updateMode);
 
 volatility.addEventListener('change', updateMode);
 
 retailer.addEventListener('change', updateMode);
 
-//event listener logic seems to be working fine
-function updateMode(){
+hd.addEventListener('click', updateDensity);
+
+md.addEventListener('click', updateDensity);
+
+ld.addEventListener('click', updateDensity);
+
+//plot button event listener
+plot.addEventListener('click', plotClicked);
+
+//default high density button selected style
+hd.style.borderColor = "black";
+hd.style.borderWidth = "3px";
+
+//update mode for all possible data layer combinations
+function updateMode() {
     if(standard.checked && volatility.checked && retailer.checked){
         mode = "overlap retailer";
         console.log("overlap retailer");
@@ -111,107 +159,48 @@ function updateMode(){
     }
 }
 
-function addListeners(){
-  hd.addEventListener("click", () => {
-    //condition for standard plot
-    let sorted_data;
-    if(mode == "standard"){
-      sorted_data = hd_growth;
-      plotCircles(sorted_data, "hd", "standard");
+//update density mode and button styles
+function updateDensity(e) {
+    if(e.target == hd) {
+        density = "hd";
+        hd.style.borderColor = "black";
+        hd.style.borderWidth = "3px";
+        md.style.borderColor = "";
+        md.style.borderWidth = "";
+        ld.style.borderColor = "";
+        ld.style.borderWidth = "";
     }
-    else if(mode == "volatility"){
-      sorted_data = hd_volatility;
-      plotCircles(sorted_data, "hd", "volatility");
+    else if(e.target == md) {
+        density = "md";
+        md.style.borderColor = "black";
+        md.style.borderWidth = "3px";
+        hd.style.borderColor = "";
+        hd.style.borderWidth = "";
+        ld.style.borderColor = "";
+        ld.style.borderWidth = "";
     }
-    else if(mode == "overlap"){
-      sorted_data = hd_overlap;
-      plotCircles(sorted_data, "hd", "overlap");
+    else if(e.target == ld) {
+        density = "ld";
+        ld.style.borderColor = "black";
+        ld.style.borderWidth = "3px";
+        hd.style.borderColor = "";
+        hd.style.borderWidth = "";
+        md.style.borderColor = "";
+        md.style.borderWidth = "";
     }
-    else if(mode == "retailer"){
-      sorted_data = hd_retailer;
-      plotCircles(sorted_data, "hd", "retailer");
-    }
-    else if(mode == "standard retailer"){
-      sorted_data = hd_growth_retailer;
-      plotCircles(sorted_data, "hd", "standard");
-    }
-    else if(mode == "volatility retailer"){
-      sorted_data = hd_volatility_retailer;
-      plotCircles(sorted_data, "hd", "volatility");
-    }
-    else if(mode == "overlap retailer"){
-      sorted_data = hd_overlap_retailer;
-      plotCircles(sorted_data, "hd", "overlap");
-    }
-  });
-  md.addEventListener("click", () => {
-    let sorted_data;
-    if(mode == "standard"){
-      sorted_data = md_growth;
-      plotCircles(sorted_data, "md", "standard");
-    }
-    else if(mode == "volatility"){
-      sorted_data = md_volatility;
-      plotCircles(sorted_data, "md", "volatility");
-    }
-    else if(mode == "overlap"){
-      sorted_data = md_overlap;
-      plotCircles(sorted_data, "md", "overlap");
-    }
-    else if(mode == "retailer"){
-      sorted_data = md_retailer;
-      plotCircles(sorted_data, "md", "retailer");
-    }
-    else if(mode == "standard retailer"){
-      sorted_data = md_growth_retailer;
-      plotCircles(sorted_data, "md", "standard");
-    }
-    else if(mode == "volatility retailer"){
-      sorted_data = md_volatility_retailer;
-      plotCircles(sorted_data, "md", "volatility");
-    }
-    else if(mode == "overlap retailer"){
-      sorted_data = md_overlap_retailer;
-      plotCircles(sorted_data, "md", "overlap");
-    }
-  });
-  ld.addEventListener("click", () => {
-    let sorted_data;
-    if(mode == "standard"){
-      sorted_data = ld_growth;
-      plotCircles(sorted_data, "ld", "standard");
-    }
-    else if(mode == "volatility"){
-      sorted_data = ld_volatility;
-      plotCircles(sorted_data, "ld", "volatility");
-    }
-    else if(mode == "overlap"){
-      sorted_data = ld_overlap;
-      plotCircles(sorted_data, "ld", "overlap");
-    }
-    else if(mode == "retailer"){
-      sorted_data = ld_retailer;
-      plotCircles(sorted_data, "ld", "retailer");
-    }
-    else if(mode == "standard retailer"){
-      sorted_data = ld_growth_retailer;
-      plotCircles(sorted_data, "ld", "standard");
-    }
-    else if(mode == "volatility retailer"){
-      sorted_data = ld_volatility_retailer;
-      plotCircles(sorted_data, "ld", "volatility");
-    }
-    else if(mode == "overlap retailer"){
-      sorted_data = ld_overlap_retailer;
-      plotCircles(sorted_data, "ld", "overlap");
-    }
-  });
+}
+
+//checking all conditions for plotting
+function plotClicked(){
+    //using indexed data for easy access
+    const dataToPlot = dataIndex[density][mode];
+    plotCircles(dataToPlot, density, mode);
 }
 
 
-function plotCircles(data, density, mode){
+function plotCircles(data, density_mode, mode){
   shapeLayer.clearLayers() //clear shapes so nothing overlaps for different buttons
-  let allZips = data.map(obj => obj.Zip);
+  let allZips = data.map(obj => obj.Zip); //error here
   let allCities = data.map(obj => obj.City); // get all Cities
   let metro = data.map(obj => obj.Metro);
   let population = data.map(obj => obj.population);
@@ -225,14 +214,11 @@ function plotCircles(data, density, mode){
   let long = data.map(obj => obj.long);
   for(var i = 0;i < data.length; i++){
       let circle_color;
-      if(mode == "standard"){
-        circle_color = generateColor(density, growth_score[i]); //generate color using the density
+      if(mode.includes("standard")){
+        circle_color = generateColor(density_mode, growth_score[i]); //generate color using the density
       }
-      else if(mode == "volatility"){
-        circle_color = generateColor(density, vol_score[i]);
-      }
-      else if(mode == "overlap"){
-        circle_color = generateColor(density, vol_score[i]);
+      else if(mode.includes("volatility") || mode.includes("overlap")){
+        circle_color = generateColor(density_mode, vol_score[i]);
       }
       else if(mode == "retailer"){
         circle_color = `rgb(255, 165, 0)`; //orange color for retailer locations

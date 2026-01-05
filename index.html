@@ -16,6 +16,7 @@
             <button class = "button" id = "hd">High Density</button>
             <button class = "button" id = "md">Moderate Density</button>
             <button class = "button" id = "ld">Low Density</button>
+            <button class = "button" id = "plot">Plot</button>
         </div>
     </head>
     <body>
@@ -34,28 +35,36 @@
             </label>
         </div>
         <div class = "row">
-            <p id = "desc">An interactive map for exploring<br> historical growth and predicted<br> trends in U.S. zip codes.<br><br><br><b>Checkboxes</b><br>
+            <p id = "desc"><br>An interactive map for exploring<br> historical growth and predicted<br> trends in U.S. zip codes.<br><br><br><b>Checkboxes</b><br>
                 <br>Growth - Top High Growth Zip Codes<br><br>Volatility - Top High Volatility Zip Codes<br><br>Retailer - Zip Codes with Walmarts<br>
                 <br><b>Filter Buttons</b><br><br>High Density - Greater than 5000 people/mi<sup>2</sup><br>
                 <br>Moderate Density - Between 1000 and 5000 people/mi<sup>2</sup><br><br>Low Density - Less than 1000 people/mi<sup>2</sup><br>
                 <br><br><b>Directions</b><br><br>Select the data layers you want to see <br> using the checkboxes. Then further filter the 
-                <br>data by population density using the grey buttons.<br> Explore the map to see the results. Use the 
-                <br>"AI Data Filter" button to alternatively <br> for a less manual experience.<br></p>
+                <br>data by population density using the grey buttons.<br> Explore the map to see the results. Finally, click<br> plot to see the results on the map. Use the 
+                <br>"AI Data Filter" button to alternatively for a less<br> manual experience.<br></p>
             <div id = "map">
                 <style>
                     .row {
                         display: flex;
                     }
                     #map { 
-                        height: 675px;
+                        height: 645px;
                         width: 1110px;
                         margin-left: 25px;
+                        border: 3px solid darkgreen;
                     }
                     #title{
                         text-align: center;
+                        font-size: 20px;
+                        font-family: Helvetica;
                     }
                     #hd{
                         margin-left: 139px;
+                    }
+                    #plot {
+                        margin-left: 25px;
+                        background-color: rgb(92, 188, 92);
+                        border-color: rgb(92, 188, 92);
                     }
                     #ai{
                         margin-left: 25px;
