@@ -345,7 +345,7 @@ async function AISubmit() {
 
 //ai response and query generator for filtering data
 async function parseUserQuery(userQuery) {
-    const response = await fetch("https://zipfinder-iazj.onrender.com", {
+    const response = await fetch("https://zipfinder-iazj.onrender.com/api/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userQuery })
