@@ -1,6 +1,13 @@
 {
+  "type": "module",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "fetch": "^1.1.0",
     "leaflet": "^1.9.4",
+    "node-fetch": "^3.3.2",
+    "openai": "^6.15.0",
     "sql.js": "^1.12.0"
   }
 }

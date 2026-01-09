@@ -1,12 +1,10 @@
 //CURRENT:
-  //Added plot button to plot after selecting options
-  //Made data easily accessible with indexed dictionary
-  //made desnity buttons change styles when selected
-  //AI Data filter button added but not implemented
+  //Preliminary AI data filter implemented
   //Note: Top least volatile high density areas are the same as top 200 highest growth areas
 
 //TODO:
-  //Work on the AI data filter querying system
+  //Make AI data filter querying system more accurate and robust
+  //Make filtering (applyFilters) less dependent on the dataIndex structure and more on entire data
   //Explore adding user inputs for top n zip codes instead of just top 200, maybe radius around zip code etc...
   //Explore adding different retailers or energy/utility cost data for zip codes
 
@@ -19,7 +17,14 @@ const standard = document.getElementById("standard");
 const volatility = document.getElementById("volatility");
 const retailer = document.getElementById("retailer");
 const plot = document.getElementById("plot");
+const ai = document.getElementById("ai"); //ai buttoon to switch mode NOT submit button
+const userInput = document.getElementById("textbox");
+const submitBtn = document.getElementById("submit");
+const standardLabel = document.getElementById("standardLabel");
+const volatilityLabel = document.getElementById("volatilityLabel");
+const retailerLabel = document.getElementById("retailerLabel");
 
+//initialize map
 const map = L.map('map').setView([40.7128, -74.0060], 13);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 maxZoom: 19,
@@ -28,6 +33,7 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
 const shapeLayer = L.layerGroup().addTo(map);
 let mode = "standard"; //default standard plot
 let density = "hd"; //default high density
+let aiMode = false; //default ai mode off
 
 //declare all data before addListeners() function  - high density, moderate density, low density
 // combined with standard, volatility, overlap, retailer
@@ -37,6 +43,8 @@ let dataIndex; //to store all indexed data for easy access later
 let hd_data, hd_growth, hd_volatility, hd_overlap, hd_retailer, hd_growth_retailer, hd_volatility_retailer, hd_overlap_retailer;
 let md_data, md_growth, md_volatility, md_overlap, md_retailer, md_growth_retailer, md_volatility_retailer, md_overlap_retailer;
 let ld_data, ld_growth, ld_volatility, ld_overlap, ld_retailer, ld_growth_retailer, ld_volatility_retailer, ld_overlap_retailer;
+
+const modes = "standard, volatility, overlap, retailer, standard retailer, volatility retailer, overlap retailer";
 
 fetch('city_data.json')
   .then(function(response) {
@@ -73,6 +81,7 @@ fetch('city_data.json')
     ld_overlap_retailer = ld_overlap.filter(item => item.Walmart_Presence == 1);
 
     //store indexed data in dict type for easy access later
+
     dataIndex = {
       hd: {
         "standard": hd_growth,
@@ -122,6 +131,10 @@ ld.addEventListener('click', updateDensity);
 
 //plot button event listener
 plot.addEventListener('click', plotClicked);
+
+ai.addEventListener('click', aiClicked);
+
+submitBtn.addEventListener('click', AISubmit);
 
 //default high density button selected style
 hd.style.borderColor = "black";
@@ -197,6 +210,39 @@ function plotClicked(){
     plotCircles(dataToPlot, density, mode);
 }
 
+function aiClicked(){
+    aiMode = !aiMode;
+    if(aiMode){
+        ai.style.backgroundColor = "lightgreen";
+        hd.style.opacity = 0;
+        md.style.opacity = 0;
+        ld.style.opacity = 0;
+        standard.style.opacity = 0;
+        volatility.style.opacity = 0;
+        retailer.style.opacity = 0;
+        plot.style.opacity = 0;
+        userInput.style.opacity = 1;
+        submitBtn.style.opacity = 1;
+        standardLabel.style.opacity = 0;
+        volatilityLabel.style.opacity = 0;
+        retailerLabel.style.opacity = 0;
+    }
+    else{
+        ai.style.backgroundColor = "";
+        hd.style.opacity = 1;
+        md.style.opacity = 1;
+        ld.style.opacity = 1;
+        standard.style.opacity = 1;
+        volatility.style.opacity = 1;
+        retailer.style.opacity = 1;
+        plot.style.opacity = 1;
+        userInput.style.opacity = 0;
+        submitBtn.style.opacity = 0;
+        standardLabel.style.opacity = 1;
+        volatilityLabel.style.opacity = 1;
+        retailerLabel.style.opacity = 1;
+    }
+}
 
 function plotCircles(data, density_mode, mode){
   shapeLayer.clearLayers() //clear shapes so nothing overlaps for different buttons
@@ -274,4 +320,42 @@ function generateColor(density, value){
       color = `rgb(${value * 255}, 0, 0)`;
     }
     return color;
+}
+
+//ai button submit handler
+async function AISubmit() {
+    const input = userInput.value.trim();
+    if (!input) {
+        alert('Please enter a query');
+        return;
+    }
+    submitBtn.value = 'Processing...';
+    try {
+        const filters = await parseUserQuery(input);
+        console.log('AI Filters:', filters); //seeing the filters generated
+        const filteredData = applyFilters(filters);
+        plotCircles(filteredData, filters.density, filters.mode);
+    } catch (error) {
+        console.error('AI filter error:', error);
+        alert('Error processing your query.');
+    } finally {
+        submitBtn.value = 'Submit';
+    }
+}
+
+//ai response and query generator for filtering data
+async function parseUserQuery(userQuery) {
+    const response = await fetch("http://localhost:3000/api/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userQuery })
+    }); //fetch to connect to backend server
+    const data = await response.json();
+    const text = data.choices[0].message.content;
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    return JSON.parse(jsonMatch[0]);
+}
+
+function applyFilters(filters) {
+    return dataIndex[filters.density][filters.mode];
 }
